@@ -3,12 +3,17 @@ package ca.mcgill.ecse211.wallfollowing;
 import lejos.hardware.motor.*;
 
 public class BangBangController implements UltrasonicController {
+	
+  /* Constants */
+  private static final int FILTER_OUT = 20;
 
   private final int bandCenter;
   private final int bandwidth;
   private final int motorLow;
   private final int motorHigh;
   private int distance;
+  private int filterControl;
+
 
   public BangBangController(int bandCenter, int bandwidth, int motorLow, int motorHigh) {
     // Default Constructor
@@ -24,53 +29,53 @@ public class BangBangController implements UltrasonicController {
 
   @Override
   public void processUSData(int distance) {
-	if(distance != 21474) {
-		this.distance = distance;
-	}
-	int error = this.distance-bandCenter; //error between the actual error and the center
-	//Maintain speed if the error is within the allowed error.
-	if(Math.abs(error) <= bandwidth) {
-    		WallFollowingLab.leftMotor.setSpeed(motorHigh);
-    		WallFollowingLab.rightMotor.setSpeed(motorHigh);
-   		WallFollowingLab.leftMotor.forward();
-    		WallFollowingLab.rightMotor.forward();
-	}
-    //Increase the outside wheel speed and decrease the inside wheel speed if the robot is too far from the wall.
-    else if(error > 0) {    
+	  
+	  if (distance >= 255 && filterControl < FILTER_OUT) {
+	      // bad value, do not set the distance var, however do increment the
+	      // filter value
+	      filterControl++;
+	    } else if (distance >= 255) {
+	      // We have repeated large values, so there must actually be nothing
+	      // there: leave the distance alone
+	      this.distance = distance;
+	    } else {
+	      // distance went below 255: reset filter and leave
+	      // distance alone.
+	      filterControl = 0;
+	      this.distance = distance;
+	    }
+    int error = this.distance - bandCenter;  // Computer value of error
+    if(Math.abs(error) <= bandwidth){       // error within limits -> keep going straight
+    	WallFollowingLab.leftMotor.setSpeed(motorHigh);
+    	WallFollowingLab.rightMotor.setSpeed(motorHigh);
+    	WallFollowingLab.leftMotor.forward();
+        WallFollowingLab.rightMotor.forward();
+    }
+    else if(error < 0){ // Negative error means too close to wall 
+    	if(error < -3){
     		WallFollowingLab.leftMotor.setSpeed(motorLow);
-		WallFollowingLab.rightMotor.setSpeed(motorHigh);
-		WallFollowingLab.leftMotor.forward();
-	    WallFollowingLab.rightMotor.forward();
+        	WallFollowingLab.rightMotor.setSpeed(motorLow);
+        	WallFollowingLab.leftMotor.forward();
+            WallFollowingLab.rightMotor.backward();
+    	}
+    	else{
+    	WallFollowingLab.leftMotor.setSpeed(motorHigh);
+    	WallFollowingLab.rightMotor.setSpeed(motorLow);
+    	WallFollowingLab.leftMotor.forward();
+        WallFollowingLab.rightMotor.forward();
+    	}
     }
-    //Do the opposite if the robot is too close to the wall.
-    else if(error < 0 && error>=-13 ) {  
-    		WallFollowingLab.leftMotor.setSpeed(motorHigh);
-		WallFollowingLab.rightMotor.setSpeed(motorLow);
-		WallFollowingLab.leftMotor.forward();
-	    WallFollowingLab.rightMotor.forward();
+    else if(error > 0) { // Positive error means too far from wall
+    	WallFollowingLab.leftMotor.setSpeed(motorLow);
+    	WallFollowingLab.rightMotor.setSpeed(motorHigh);
+    	WallFollowingLab.leftMotor.forward();
+        WallFollowingLab.rightMotor.forward();
     }
-    else if(error < -13) {
-		WallFollowingLab.leftMotor.setSpeed(motorHigh*6);
-		WallFollowingLab.rightMotor.setSpeed(50);
-		WallFollowingLab.leftMotor.forward();
-	    WallFollowingLab.rightMotor.forward();
-	}
+    
   }
 
   @Override
   public int readUSDistance() {
     return this.distance;
   }
-  
-  /*int calcCorrection (int diff) {
-	  int correction; 
-	  if (diff<0) {
-		  diff= Math.abs(diff);
-	  }
-	  correction = (int)(proportionConstant*(double)(diff));
-	  if(correction >= motorHigh) {
-		  correction = motorLow;
-	  }
-	  return correction; 
-  }*/
 }

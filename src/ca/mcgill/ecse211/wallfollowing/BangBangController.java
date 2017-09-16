@@ -45,14 +45,14 @@ public class BangBangController implements UltrasonicController {
 	      this.distance = distance;
 	    }
     int error = this.distance - bandCenter;  // Computer value of error
-    if(Math.abs(error) <= bandwidth){       // error within limits -> keep going straight
+    if(Math.abs(error) <= bandwidth){       // Error within limits -> keep going straight
     	WallFollowingLab.leftMotor.setSpeed(motorHigh);
     	WallFollowingLab.rightMotor.setSpeed(motorHigh);
     	WallFollowingLab.leftMotor.forward();
         WallFollowingLab.rightMotor.forward();
     }
     else if(error < 0){ // Negative error means too close to wall 
-    	if(error < -3){
+    	if(error < -3){ // Emergency turn used for convex angles
     		WallFollowingLab.leftMotor.setSpeed(motorLow);
         	WallFollowingLab.rightMotor.setSpeed(motorLow);
         	WallFollowingLab.leftMotor.forward();

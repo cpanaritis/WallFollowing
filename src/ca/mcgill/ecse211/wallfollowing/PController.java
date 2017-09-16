@@ -20,7 +20,7 @@ public class PController implements UltrasonicController {
     this.bandWidth = bandwidth;
     this.filterControl = 0;
 
-    WallFollowingLab.leftMotor.setSpeed(MOTOR_SPEED); // Initalize motor rolling forward
+    WallFollowingLab.leftMotor.setSpeed(MOTOR_SPEED); // Initialize motor rolling forward
     WallFollowingLab.rightMotor.setSpeed(MOTOR_SPEED);
     WallFollowingLab.leftMotor.forward();
     WallFollowingLab.rightMotor.forward();
@@ -58,7 +58,7 @@ public class PController implements UltrasonicController {
     	}
     //Do the opposite if the robot is too close to the wall.
     else if(error < 0) {
-    	if(error < -3){
+    	if(error < -3){ // Emergency turn used for convex angles
         	WallFollowingLab.leftMotor.setSpeed(MOTOR_SPEED);
         	WallFollowingLab.rightMotor.setSpeed(MOTOR_SPEED);
     		WallFollowingLab.leftMotor.forward();

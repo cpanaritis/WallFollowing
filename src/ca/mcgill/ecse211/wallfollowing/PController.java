@@ -58,7 +58,7 @@ public class PController implements UltrasonicController {
     	}
     //Do the opposite if the robot is too close to the wall.
     else if(error < 0) {
-    	if(error < -3){ // Emergency turn used for convex angles
+    	if(error < -3){ // Emergency turn used for convex angles.
         	WallFollowingLab.leftMotor.setSpeed(MOTOR_SPEED);
         	WallFollowingLab.rightMotor.setSpeed(MOTOR_SPEED);
     		WallFollowingLab.leftMotor.forward();

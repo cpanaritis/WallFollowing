@@ -75,7 +75,7 @@ public class PController implements UltrasonicController {
     //Increase the outside wheel speed and decrease the inside wheel speed if the robot is too far from the wall.
     else if (error > 0) {   
     	deltaChange = calcCorrection (error);
-    	WallFollowingLab.leftMotor.setSpeed(MOTOR_SPEED - MAXCORRECTION);
+    	WallFollowingLab.leftMotor.setSpeed(MOTOR_SPEED - MAXCORRECTION); //Using the deltaChnage on the left wheel would consistently make it crash so we set it to a fixed number.
     	WallFollowingLab.rightMotor.setSpeed(MOTOR_SPEED + deltaChange);
 		WallFollowingLab.leftMotor.forward();
 		WallFollowingLab.rightMotor.forward();

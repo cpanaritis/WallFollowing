@@ -66,10 +66,10 @@ public class BangBangController implements UltrasonicController {
     	}
     }
     else if(error > 0) { // Positive error means too far from wall.
-    	WallFollowingLab.leftMotor.setSpeed(motorLow);
-    	WallFollowingLab.rightMotor.setSpeed(motorHigh);
-    	WallFollowingLab.leftMotor.forward();
-        WallFollowingLab.rightMotor.forward();
+    	  WallFollowingLab.leftMotor.setSpeed(motorLow);
+      WallFollowingLab.rightMotor.setSpeed(motorHigh);
+    	  WallFollowingLab.leftMotor.forward();
+      WallFollowingLab.rightMotor.forward();
     }
     
   }
